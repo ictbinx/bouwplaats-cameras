@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Deposten1 Camera Stream</title>
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #000;
+    width: 100%;
+    height: 100%;
+  }
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>
+</head>
+<body>
+
+<iframe
+  id="camstream"
+  src="https://g0.ipcamlive.com/player/player.php?alias=deposten1&autoplay=1&mute=1"
+  allowfullscreen
+  allow="autoplay; fullscreen">
+</iframe>
+
+<script>
+  // Ververst de iframe elke X minuten, zodat de stream nooit "vastloopt"
+  // op het play-icoontje na een korte onderbreking.
+  var REFRESH_INTERVAL_MINUTES = 20;
+
+  setInterval(function () {
+    var iframe = document.getElementById('camstream');
+    var baseSrc = "https://g0.ipcamlive.com/player/player.php?alias=deposten1&autoplay=1&mute=1";
+    // Cache-buster toevoegen zodat de browser de iframe echt opnieuw laadt
+    iframe.src = baseSrc + "&_r=" + new Date().getTime();
+  }, REFRESH_INTERVAL_MINUTES * 60 * 1000);
+</script>
+
+</body>
+</html>
