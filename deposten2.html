@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Camera Stream</title>
+
+<!-- ============================================================
+     CAMERA INSTELLEN
+     Vul hieronder bij ALIAS de naam van de camera in.
+     Voorbeeld: "deposten2
+"
+     Dit is de ENIGE regel die je hoeft aan te passen.
+     ============================================================ -->
+<script>
+  var ALIAS = "deposten1";
+</script>
+<!-- ======================= EINDE INSTELLING ================== -->
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #000;
+    width: 100%;
+    height: 100%;
+  }
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>
+</head>
+<body>
+<iframe
+  id="camstream"
+  allowfullscreen
+  allow="autoplay; fullscreen">
+</iframe>
+<script>
+  var baseSrc = "https://g0.ipcamlive.com/player/player.php?alias=" + ALIAS + "&autoplay=1&mute=1";
+
+  document.title = ALIAS + " Camera Stream";
+  document.getElementById('camstream').src = baseSrc;
+
+  // Ververst de iframe elke X minuten, zodat de stream nooit "vastloopt"
+  // op het play-icoontje na een korte onderbreking.
+  var REFRESH_INTERVAL_MINUTES = 20;
+  setInterval(function () {
+    var iframe = document.getElementById('camstream');
+    // Cache-buster toevoegen zodat de browser de iframe echt opnieuw laadt
+    iframe.src = baseSrc + "&_r=" + new Date().getTime();
+  }, REFRESH_INTERVAL_MINUTES * 60 * 1000);
+</script>
+</body>
+</html>
