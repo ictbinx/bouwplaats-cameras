@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<title>Camera Stream</title>
+<!-- ============================================================
+     CAMERA INSTELLEN
+     Vul hieronder bij ALIAS de naam van de camera in.
+     Voorbeeld: "deposten1"
+     Dit is de ENIGE regel die je hoeft aan te passen.
+     ============================================================ -->
+<script>
+  var ALIAS = "aventurijn";
+</script>
+<!-- ======================= EINDE INSTELLING ================== -->
+
+<!-- Deze twee link-tags worden hieronder met JS gevuld met een
+     automatisch gegenereerd icoon/thumbnail met de aliasnaam. -->
+<link rel="icon" id="dynamicFavicon" type="image/png">
+<link rel="apple-touch-icon" id="dynamicAppleIcon">
+
+<style>
+  html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background: #000;
+    width: 100%;
+    height: 100%;
+  }
+  iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>
+</head>
+<body>
+<iframe
+  id="camstream"
+  allowfullscreen
+  allow="autoplay; fullscreen">
+</iframe>
+<script>
+  var baseSrc = "https://g0.ipcamlive.com/player/player.php?alias=" + ALIAS + "&autoplay=1&mute=1";
+  document.title = ALIAS + " Camera Stream";
+  document.getElementById('camstream').src = baseSrc;
+
+  // Ververst de iframe elke X minuten, zodat de stream nooit "vastloopt"
+  // op het play-icoontje na een korte onderbreking.
+  var REFRESH_INTERVAL_MINUTES = 20;
+  setInterval(function () {
+    var iframe = document.getElementById('camstream');
+    // Cache-buster toevoegen zodat de browser de iframe echt opnieuw laadt
+    iframe.src = baseSrc + "&_r=" + new Date().getTime();
+  }, REFRESH_INTERVAL_MINUTES * 60 * 1000);
+
+  // ============================================================
+  // AUTOMATISCHE THUMBNAIL / ICOON GENEREREN
+  // Genereert twee afbeeldingen met canvas op basis van ALIAS:
+  //  1) een klein favicon (tabblad-icoontje)
+  //  2) een groter icoon voor "toevoegen aan beginscherm" (mobiel/tablet)
+  // ============================================================
+  function generateThumbnails(alias) {
+    // --- 1) Favicon (64x64, wordt klein getoond, dus alleen de alias) ---
+    var favCanvas = document.createElement('canvas');
+    favCanvas.width = 64;
+    favCanvas.height = 64;
+    var fctx = favCanvas.getContext('2d');
+    fctx.fillStyle = '#111827';
+    fctx.fillRect(0, 0, 64, 64);
+    fctx.fillStyle = '#ffffff';
+    fctx.textAlign = 'center';
+    fctx.textBaseline = 'middle';
+
+    var text = alias.toUpperCase();
+    var fontSize = 22;
+    do {
+      fctx.font = 'bold ' + fontSize + 'px Arial, sans-serif';
+      fontSize--;
+    } while (fctx.measureText(text).width > 56 && fontSize > 6);
+    fctx.fillText(text, 32, 34);
+
+    document.getElementById('dynamicFavicon').href = favCanvas.toDataURL('image/png');
+
+    // --- 2) Apple touch icon (180x180, ruimte voor volledige tekst) ---
+    var appleCanvas = document.createElement('canvas');
+    appleCanvas.width = 180;
+    appleCanvas.height = 180;
+    var actx = appleCanvas.getContext('2d');
+    actx.fillStyle = '#111827';
+    actx.fillRect(0, 0, 180, 180);
+    actx.fillStyle = '#ffffff';
+    actx.textAlign = 'center';
+
+    actx.font = 'bold 18px Arial, sans-serif';
+    actx.fillText('Camera Stream', 90, 78);
+
+    var aliasFontSize = 26;
+    do {
+      actx.font = 'bold ' + aliasFontSize + 'px Arial, sans-serif';
+      aliasFontSize--;
+    } while (actx.measureText(alias).width > 160 && aliasFontSize > 10);
+    actx.fillText(alias, 90, 112);
+
+    document.getElementById('dynamicAppleIcon').href = appleCanvas.toDataURL('image/png');
+  }
+
+  generateThumbnails(ALIAS);
+</script>
+</body>
+</html>
